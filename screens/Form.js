@@ -17,6 +17,7 @@ import {
 } from 'native-base';
 
 import {SafeAreaView, StyleSheet, ScrollView, View} from 'react-native';
+import PersonRepository from '../repositories/person';
 import store from '../redux/store';
 import {ADD_PERSON} from '../redux/actions';
 import {useState} from 'react';
@@ -43,15 +44,20 @@ export default function Lista(props) {
   const [birthday, setBirthday] = useState('');
 
   const savePerson = () => {
+
+    const repository = new PersonRepository();
+    
     //Adicionando nova pessoa
-    store.dispatch(ADD_PERSON({name, birthday}));
+    repository.Save({name, birthday}, () => {
+      //Informando que o cadastro foi feito com sucesso
+      alert('Salvo com Sucesso');
 
-    //Informando que o cadastro foi feito com sucesso
-    alert("Salvo com Sucesso");
-
-    //Retornando a tela inicial
-    const navigation = props.navigation;
-    navigation.replace('List');
+      //Retornando a tela inicial
+      const navigation = props.navigation;
+      navigation.replace('List');
+    }, (e) => {
+      alert('Erro durante salvamento');
+    });
   };
 
   return (

@@ -17,6 +17,7 @@ import {
 
 import store from '../redux/store';
 import {SafeAreaView, StyleSheet, ScrollView, View} from 'react-native';
+import PersonRepository from '../repositories/person';
 import {useState} from 'react';
 
 const styles = StyleSheet.create({
@@ -37,10 +38,23 @@ const styles = StyleSheet.create({
 export default function Lista(props) {
   const [people, setPeople] = useState([]);
 
+  const retrieveData = () => {
+    const repository = new PersonRepository();
+    repository.Retrieve((tx, results) => {
+      
+      let data = [];
+
+      for (let i = 0; i < results.rows.length; i++) {
+        data.push(results.rows.item(i));
+      }
+
+      setPeople(data);
+    });
+  };
+
   React.useEffect(() => {
-    const p = store.getState().people;
-    setPeople(p);
-  });
+    retrieveData();
+  }, []);
 
   return (
     <StyleProvider style={getTheme(Custom)}>
