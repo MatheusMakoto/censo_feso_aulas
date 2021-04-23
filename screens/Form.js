@@ -19,6 +19,7 @@ import {
 import {SafeAreaView, StyleSheet, ScrollView, View} from 'react-native';
 import PersonRepository from '../repositories/person';
 import store from '../redux/store';
+import CameraView from './Camera';
 import {ADD_PERSON} from '../redux/actions';
 import {useState} from 'react';
 
@@ -42,13 +43,16 @@ export default function Lista(props) {
  
   const [name, setName] = useState('');
   const [birthday, setBirthday] = useState('');
+  const [photo, setPhoto] = useState(null);
+  const [showCamera, setShowCamera] = useState(false);
+
 
   const savePerson = () => {
 
     const repository = new PersonRepository();
     
     //Adicionando nova pessoa
-    repository.Save({name, birthday}, () => {
+    repository.Save({name, birthday, photo}, () => {
       //Informando que o cadastro foi feito com sucesso
       alert('Salvo com Sucesso');
 
@@ -59,6 +63,15 @@ export default function Lista(props) {
       alert('Erro durante salvamento');
     });
   };
+
+  const openCamera = () => {
+    setShowCamera(true);
+  };
+
+
+  if (showCamera) {
+    return <CameraView setShowCamera={setShowCamera} setPhoto={setPhoto} />
+  }
 
   return (
     <StyleProvider style={getTheme(Custom)}>
@@ -90,6 +103,24 @@ export default function Lista(props) {
             </ScrollView>
           </Content>
         </Container>
+
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 95,
+            right: 25,
+          }}>
+          <Button
+            rounded
+            dark
+            style={{
+              height: 55,
+              width: 55,
+            }}
+            onPress={openCamera}>
+            <Icon type="FontAwesome" name="camera" />
+          </Button>
+        </View>
 
         <View
           style={{
